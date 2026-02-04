@@ -240,7 +240,8 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
                        <h1 className="text-xl font-black uppercase tracking-tighter">Cubitt Panama</h1>
                    </div>
                    <div className="text-[10px] text-gray-500 leading-tight">
-                       Costa del Este, Panama City<br />
+                       Kenex Plaza, Avenida Samuel Lewis<br />
+                       con Calle 59 de Obarrio<br />
                        +507 6154-1129
                    </div>
                 </div>
@@ -310,8 +311,8 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
                     <div>
                         <span className="block font-bold text-black mb-0.5">Banco General</span>
                         Cuenta Corriente<br />
-                        03-45-01-129485-3<br />
-                        Fit Solution Panama S.A.
+                        03-72-01-120359-5<br />
+                        Casiolandia
                     </div>
                     <div>
                         <span className="block font-bold text-black mb-0.5">Términos</span>
@@ -324,7 +325,7 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
 
             <div className="text-center border-t border-gray-100 pt-3 mt-4">
                  <p className="text-[8px] text-gray-400 font-medium uppercase tracking-widest">
-                    www.cubitt.com
+                    Cubitt.com.pa
                  </p>
             </div>
 

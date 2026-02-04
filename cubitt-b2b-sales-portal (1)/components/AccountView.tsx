@@ -26,7 +26,7 @@ const AccountView: React.FC<AccountViewProps> = ({ user, onBack, orders, onDelet
                 <div className="bg-[#F5F5F7] p-10 border-b border-black/5 flex flex-col items-center text-center">
                     <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white p-1 shadow-lg mb-6">
                         <img 
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=200&h=200&q=80" 
+                        src={user.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=200&h=200&q=80"} 
                         alt="Profile" 
                         className="w-full h-full rounded-full object-cover"
                         />

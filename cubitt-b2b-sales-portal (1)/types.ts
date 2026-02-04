@@ -40,6 +40,7 @@ export interface User {
   authorized: boolean;
   contractUpdateDate: string;
   taxId?: string;
+  avatar?: string;
 }
 
 export interface Order {

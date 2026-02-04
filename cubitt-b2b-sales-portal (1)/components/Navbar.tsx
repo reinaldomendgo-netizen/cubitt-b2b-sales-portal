@@ -79,8 +79,8 @@ const Navbar: React.FC<NavbarProps> = ({ user, cartCount, onOpenCart, onNavigate
               </div>
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-black/5 p-0.5 overflow-hidden transition-all group-hover:border-black">
                 <img 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" 
-                  alt="Admin User" 
+                  src={user.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80"} 
+                  alt={user.companyName} 
                   className="w-full h-full rounded-full object-cover"
                 />
               </div>

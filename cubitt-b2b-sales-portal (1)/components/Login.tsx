@@ -84,13 +84,17 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       return;
     }
 
+    // Generar avatar con iniciales usando UI Avatars (Estilo minimalista blanco y negro)
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(companyName)}&background=000000&color=ffffff&bold=true&length=2&size=128`;
+
     onLogin({
       id: `CUST-${Date.now().toString().slice(-4)}`,
       companyName: companyName,
       email: 'contacto@cliente.com', // Default placeholder
       taxId: '', // Optional now
       authorized: true,
-      contractUpdateDate: new Date().toLocaleDateString('es-PA')
+      contractUpdateDate: new Date().toLocaleDateString('es-PA'),
+      avatar: avatarUrl
     }, loadedProducts);
   };
 
