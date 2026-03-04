@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]); // Historial de pedidos
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [inStockOnly, setInStockOnly] = useState(true); // Default true, aunque el filtro inicial ya limpia
+  // const [inStockOnly, setInStockOnly] = useState(true); // Removed as per request to always hide out of stock
   const [currentView, setCurrentView] = useState<AppView>('CATALOG');
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   
@@ -52,11 +52,11 @@ const App: React.FC = () => {
       const matchesCategory = selectedCategory === 'All' || p.type === selectedCategory;
       const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            p.variants.some(v => v.sku.toLowerCase().includes(searchQuery.toLowerCase()));
-      // El login ya filtra stock <= 0, pero mantenemos esto por si el usuario usa el toggle
-      const matchesStock = inStockOnly ? !p.isOutOfStock : true;
+      // Always filter out out of stock products
+      const matchesStock = !p.isOutOfStock;
       return matchesCategory && matchesSearch && matchesStock;
     });
-  }, [products, selectedCategory, searchQuery, inStockOnly]);
+  }, [products, selectedCategory, searchQuery]);
 
   const cartTotal = cart.reduce((acc, curr) => acc + (curr.variant.price * curr.quantity), 0);
   const cartCount = cart.reduce((acc, curr) => acc + curr.quantity, 0);
@@ -99,7 +99,6 @@ const App: React.FC = () => {
     return <Login onLogin={(u, loadedProducts) => {
       setUser(u);
       setProducts(loadedProducts); 
-      setInStockOnly(true); // Asegurar que inicie filtrado
     }} />;
   }
 
@@ -121,8 +120,6 @@ const App: React.FC = () => {
             products={products}
             selectedCategory={selectedCategory} 
             setSelectedCategory={setSelectedCategory} 
-            inStockOnly={inStockOnly}
-            setInStockOnly={setInStockOnly}
             isOpen={isMobileMenuOpen}
             onClose={() => setIsMobileMenuOpen(false)}
           />
