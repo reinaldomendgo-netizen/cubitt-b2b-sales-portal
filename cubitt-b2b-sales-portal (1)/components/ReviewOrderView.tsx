@@ -273,11 +273,18 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
                 <tbody className="text-xs">
                     {cart.map((item, idx) => (
                         <tr key={idx} className="border-b border-gray-100">
-                            <td className="py-1.5 pr-2">
-                                <div className="font-bold truncate max-w-[250px]">{item.product.title}</div>
-                                <div className="text-[10px] text-gray-500">{item.variant.option1}</div>
+                            <td className="py-1.5 pr-2 flex items-center gap-3">
+                                {item.variant.image && (
+                                    <div className="w-8 h-8 flex-shrink-0 bg-gray-50 rounded border border-gray-100 p-0.5">
+                                        <img src={item.variant.image} className="w-full h-full object-contain mix-blend-multiply" alt="" />
+                                    </div>
+                                )}
+                                <div>
+                                    <div className="font-bold truncate max-w-[200px]">{item.product.title}</div>
+                                    <div className="text-[10px] text-gray-500">{item.variant.option1}</div>
+                                </div>
                             </td>
-                            <td className="py-1.5 text-center font-mono text-[10px] text-gray-500">{item.variant.sku}</td>
+                            <td className="py-1.5 text-center font-mono text-xs font-bold text-gray-700">{item.variant.sku}</td>
                             <td className="py-1.5 text-center font-bold">{item.quantity}</td>
                             <td className="py-1.5 text-right text-gray-600">${item.variant.price.toFixed(2)}</td>
                             <td className="py-1.5 text-right font-bold">${(item.variant.price * item.quantity).toFixed(2)}</td>
