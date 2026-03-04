@@ -6,8 +6,6 @@ interface SidebarProps {
   products: Product[];
   selectedCategory: Category;
   setSelectedCategory: (c: Category) => void;
-  inStockOnly: boolean;
-  setInStockOnly: (val: boolean) => void;
   onDataUpdate?: (products: Product[]) => void;
   onResetData?: () => void;
   isOpen?: boolean;
@@ -18,8 +16,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   products, 
   selectedCategory, 
   setSelectedCategory, 
-  inStockOnly, 
-  setInStockOnly,
   isOpen = false,
   onClose
 }) => {
@@ -78,19 +74,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className="mb-8">
-        <h3 className="text-[10px] md:text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 px-3">Filtros</h3>
-        <div 
-          className="flex items-center gap-3 cursor-pointer group px-3 py-2 bg-white rounded-xl border border-black/5" 
-          onClick={() => setInStockOnly(!inStockOnly)}
-        >
-          <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${inStockOnly ? 'bg-black border-black' : 'border-gray-300'}`}>
-            {inStockOnly && <span className="material-icons text-[10px] text-white">done</span>}
-          </div>
-          <label className="text-sm text-gray-600 group-hover:text-black transition-colors cursor-pointer font-medium">Solo en Stock</label>
-        </div>
       </div>
     </div>
   );

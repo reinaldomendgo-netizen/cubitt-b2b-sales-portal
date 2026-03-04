@@ -9,7 +9,8 @@ interface ProductModalProps {
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAdd }) => {
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(product.variants[0]);
+  const availableVariants = product.variants.filter(v => v.inventory > 0);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(availableVariants[0] || product.variants[0]);
   const [quantity, setQuantity] = useState(1);
   const [animating, setAnimating] = useState(false);
 
@@ -62,7 +63,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAdd }) 
             <div>
               <h3 className="text-sm font-semibold mb-4 text-[#1d1d1f]">Select Color</h3>
               <div className="flex flex-wrap gap-3">
-                {product.variants.map((v) => (
+                {availableVariants.map((v) => (
                   <button 
                     key={v.sku}
                     onClick={() => setSelectedVariant(v)}

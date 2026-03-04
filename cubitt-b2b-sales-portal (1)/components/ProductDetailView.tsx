@@ -15,8 +15,15 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
   const [quantity, setQuantity] = useState<number | string>(1);
   const [isAdded, setIsAdded] = useState(false);
 
+  const availableVariants = product.variants.filter(v => v.inventory > 0);
+
   useEffect(() => {
-    setSelectedVariant(product.variants[0]);
+    const firstAvailable = product.variants.find(v => v.inventory > 0);
+    if (firstAvailable) {
+      setSelectedVariant(firstAvailable);
+    } else {
+      setSelectedVariant(product.variants[0]);
+    }
     setQuantity(1);
   }, [product]);
 
@@ -24,8 +31,10 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
   const itemTotal = (selectedVariant.price * currentQty).toFixed(2);
 
   const handleAdd = () => {
+    if (currentQty <= 0) return;
     onAddToCart(product, selectedVariant.sku, currentQty);
     setIsAdded(true);
+    setQuantity(1);
     setTimeout(() => setIsAdded(false), 2000);
   };
 
@@ -90,7 +99,7 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
               <div className="flex justify-between items-end mb-4 md:mb-6">
                 <div>
                   <h3 className="text-[9px] md:text-[10px] font-black text-black uppercase tracking-[0.4em] mb-1">Colores Disponibles</h3>
-                  <div className="text-[8px] md:text-[9px] font-bold text-gray-400 uppercase tracking-widest">Total: {product.variants.length} variantes</div>
+                  <div className="text-[8px] md:text-[9px] font-bold text-gray-400 uppercase tracking-widest">Total: {availableVariants.length} variantes</div>
                 </div>
                 <div className="text-right">
                   <span className="text-[8px] md:text-[9px] font-mono font-black text-black bg-black/5 px-3 py-1 md:px-4 md:py-1.5 rounded-full border border-black/5 uppercase">
@@ -101,7 +110,7 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
 
               {/* Grid sin límite de altura y sin scroll para ver todos */}
               <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
-                {product.variants.map((v) => (
+                {availableVariants.map((v) => (
                   <button 
                     key={v.sku}
                     onClick={() => setSelectedVariant(v)}
@@ -165,8 +174,11 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
 
             <button 
               onClick={handleAdd}
+              disabled={currentQty <= 0}
               className={`w-full h-12 md:h-16 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] transition-all flex items-center justify-center gap-2 md:gap-4 mb-3 md:mb-4 ${
-                isAdded ? 'bg-accent-green text-white scale-[1.01]' : 'bg-white text-black hover:bg-gray-100 active:scale-95 shadow-lg'
+                isAdded ? 'bg-accent-green text-white scale-[1.01]' : 
+                currentQty <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' :
+                'bg-white text-black hover:bg-gray-100 active:scale-95 shadow-lg'
               }`}
             >
               <span className="material-icons text-lg md:text-xl">{isAdded ? 'done' : 'add_shopping_cart'}</span>

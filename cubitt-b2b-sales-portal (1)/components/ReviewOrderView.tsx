@@ -27,6 +27,7 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
   const subtotal = cart.reduce((acc, curr) => acc + (curr.variant.price * curr.quantity), 0);
   const tax = subtotal * 0.07;
   const total = subtotal + tax;
+  const totalQuantity = cart.reduce((acc, curr) => acc + curr.quantity, 0);
   
   const buildOrderText = () => {
     const br = "\n";
@@ -288,6 +289,10 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
             {/* Totals */}
             <div className="flex justify-end mb-6">
                 <div className="w-48 space-y-1">
+                    <div className="flex justify-between text-xs text-gray-600">
+                        <span>Cant. Total</span>
+                        <span className="font-medium">{totalQuantity}</span>
+                    </div>
                     <div className="flex justify-between text-xs text-gray-600">
                         <span>Subtotal</span>
                         <span className="font-medium">${subtotal.toFixed(2)}</span>
