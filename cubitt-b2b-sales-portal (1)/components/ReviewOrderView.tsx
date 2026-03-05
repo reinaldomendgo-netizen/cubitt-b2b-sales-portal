@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CartItem, Order, User } from '../types';
 
 interface ReviewOrderViewProps {
@@ -22,6 +22,9 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
   onSaveOrder
 }) => {
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  
+  // Generar ID de orden único y estable para esta sesión de vista
+  const orderId = useMemo(() => Date.now().toString().slice(-7), []);
 
   // Cálculos financieros
   const subtotal = cart.reduce((acc, curr) => acc + (curr.variant.price * curr.quantity), 0);
@@ -38,13 +41,13 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
     cart.forEach((item, i) => {
       text += `${i+1}. *${item.product.title}*${br}   SKU: \`${item.variant.sku}\` | Cant: ${item.quantity}${br}${br}`;
     });
-    text += `*TOTAL FINAL: $${total.toFixed(2)}*${br}${br}ID: ${Date.now().toString().slice(-6)}`;
+    text += `*TOTAL FINAL: $${total.toFixed(2)}*${br}${br}ID: ${orderId}`;
     return text;
   };
 
   const saveToHistory = (status: 'Paid' | 'Pending') => {
     const newOrder: Order = {
-      id: `ORD-${Date.now().toString().slice(-6)}`,
+      id: `ORD-${orderId}`,
       date: new Date().toLocaleDateString('es-PA', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
       items: [...cart],
       subtotal,
@@ -71,9 +74,11 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
       const html2pdf = window.html2pdf;
       if (typeof html2pdf !== 'function') throw new Error('Librería PDF no cargada');
       
+      const clientName = user?.companyName?.replace(/[^a-zA-Z0-9]/g, '_') || 'Cliente';
+      
       const opt = {
         margin:       0.3, 
-        filename:     `Cubitt_Proforma_${user?.companyName?.replace(/\s+/g, '_') || 'Cliente'}_${Date.now()}.pdf`,
+        filename:     `${clientName}_PF_${orderId}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true, logging: false, scrollY: 0 },
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
@@ -184,24 +189,24 @@ const ReviewOrderView: React.FC<ReviewOrderViewProps> = ({
             </table>
         </div>
 
-        <div className="bg-gray-50 p-6 md:p-10 border-t border-gray-100">
+        <div className="bg-gray-50 p-4 md:p-10 border-t border-gray-100">
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-8">
                 <div className="text-[10px] text-gray-400 max-w-xs leading-relaxed hidden md:block">
                     * Los precios y disponibilidad están sujetos a cambios. Esta proforma tiene una validez de 30 días a partir de la fecha de emisión.
                 </div>
                 <div className="w-full md:w-auto space-y-3">
-                    <div className="flex justify-between md:justify-end gap-12 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <div className="flex justify-between md:justify-end gap-12 text-sm md:text-xs font-bold text-gray-500 uppercase tracking-wider">
                        <span>Subtotal</span>
                        <span className="text-gray-900">${subtotal.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between md:justify-end gap-12 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <div className="flex justify-between md:justify-end gap-12 text-sm md:text-xs font-bold text-gray-500 uppercase tracking-wider">
                        <span>ITBMS (7%)</span>
                        <span className="text-gray-900">${tax.toFixed(2)}</span>
                     </div>
                     <div className="w-full h-px bg-gray-200 my-2"></div>
                     <div className="flex justify-between md:justify-end gap-12 items-baseline">
                         <div className="text-gray-900 text-sm font-black uppercase tracking-widest">Total Final</div>
-                        <div className="text-3xl md:text-4xl font-black text-gray-900 tracking-tighter">${total.toFixed(2)}</div>
+                        <div className="text-2xl md:text-4xl font-black text-gray-900 tracking-tighter">${total.toFixed(2)}</div>
                     </div>
                 </div>
             </div>

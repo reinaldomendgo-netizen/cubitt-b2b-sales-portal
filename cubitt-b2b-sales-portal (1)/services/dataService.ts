@@ -109,11 +109,23 @@ const processRawRows = (rows: DataRow[]): Product[] => {
 
   // 5. Post-procesamiento y Limpieza
   return Object.values(productMap).map(product => {
-    // Si el producto padre no tiene imagen, usar la de la primera variante que tenga
-    if (!product.mainImage) {
-      const firstVariantWithImage = product.variants.find(v => v.image);
-      if (firstVariantWithImage) {
-        product.mainImage = firstVariantWithImage.image;
+    // Lógica para seleccionar una imagen "variada" (no siempre la negra/primera)
+    // Preferir imágenes de variantes que no sean colores neutros si es posible
+    const variantsWithImages = product.variants.filter(v => v.image);
+    
+    if (variantsWithImages.length > 0) {
+      // Intentar encontrar una variante que no sea negra/blanca/gris
+      const colorfulVariant = variantsWithImages.find(v => {
+        const color = v.option1.toLowerCase();
+        return !['black', 'negro', 'white', 'blanco', 'grey', 'gray', 'gris', 'plata', 'silver'].some(c => color.includes(c));
+      });
+
+      // Si encontramos una colorida, la usamos como principal. Si no, usamos la primera disponible.
+      // Esto sobreescribe la imagen del padre si se encontró una mejor opción.
+      if (colorfulVariant) {
+        product.mainImage = colorfulVariant.image;
+      } else if (!product.mainImage) {
+        product.mainImage = variantsWithImages[0].image;
       }
     }
     

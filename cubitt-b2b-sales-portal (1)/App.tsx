@@ -72,7 +72,10 @@ const App: React.FC = () => {
       const existingIndex = prev.findIndex(item => item.variant.sku === variantSku);
       if (existingIndex > -1) {
         const newCart = [...prev];
-        newCart[existingIndex].quantity += quantity;
+        newCart[existingIndex] = {
+          ...newCart[existingIndex],
+          quantity: newCart[existingIndex].quantity + quantity
+        };
         return newCart;
       }
       return [...prev, { product, variant, quantity }];
@@ -114,14 +117,30 @@ const App: React.FC = () => {
         onToggleMobileMenu={() => setIsMobileMenuOpen(true)}
       />
       
+      <Sidebar 
+        products={products}
+        selectedCategory={selectedCategory} 
+        setSelectedCategory={(cat) => {
+          setSelectedCategory(cat);
+          if (currentView !== 'CATALOG') navigateTo('CATALOG');
+        }} 
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        showDesktop={false}
+      />
+
       {currentView === 'CATALOG' && (
         <div className="max-w-[1440px] mx-auto px-4 md:px-6 py-4 md:py-8 flex gap-8 w-full h-[calc(100vh-60px)] md:h-[calc(100vh-80px)]">
           <Sidebar 
             products={products}
             selectedCategory={selectedCategory} 
-            setSelectedCategory={setSelectedCategory} 
-            isOpen={isMobileMenuOpen}
-            onClose={() => setIsMobileMenuOpen(false)}
+            setSelectedCategory={(cat) => {
+              setSelectedCategory(cat);
+              // No need to navigate as we are already in CATALOG
+            }} 
+            isOpen={false}
+            onClose={() => {}}
+            showDesktop={true}
           />
           
           <ProductGrid 

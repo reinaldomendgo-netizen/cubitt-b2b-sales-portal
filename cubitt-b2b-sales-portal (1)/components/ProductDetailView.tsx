@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Product, ProductVariant } from '../types';
 import { COLOR_MAP } from '../constants';
 
@@ -14,6 +14,7 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(product.variants[0]);
   const [quantity, setQuantity] = useState<number | string>(1);
   const [isAdded, setIsAdded] = useState(false);
+  const isAddingRef = useRef(false);
 
   const availableVariants = product.variants.filter(v => v.inventory > 0);
 
@@ -31,11 +32,17 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
   const itemTotal = (selectedVariant.price * currentQty).toFixed(2);
 
   const handleAdd = () => {
-    if (currentQty <= 0) return;
+    if (currentQty <= 0 || isAddingRef.current) return;
+    
+    isAddingRef.current = true;
     onAddToCart(product, selectedVariant.sku, currentQty);
     setIsAdded(true);
     setQuantity(1);
-    setTimeout(() => setIsAdded(false), 2000);
+    
+    setTimeout(() => {
+      setIsAdded(false);
+      isAddingRef.current = false;
+    }, 500);
   };
 
   const handleQuantityChange = (val: string) => {
@@ -66,7 +73,7 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 bg-white rounded-[32px] md:rounded-[40px] border border-black/5 p-6 md:p-12 shadow-xl">
         
         {/* Galería Técnica compacta */}
-        <div className="lg:col-span-5 flex items-center justify-center bg-[#F5F5F7] rounded-[24px] md:rounded-[32px] p-6 md:p-10 h-[250px] md:min-h-[400px] border border-black/5 shadow-inner">
+        <div className="lg:col-span-5 flex items-center justify-center bg-[#F5F5F7] rounded-[24px] md:rounded-[32px] p-6 md:p-8 h-full min-h-[300px] border border-black/5 shadow-inner self-stretch">
           {selectedVariant.image ? (
             <img 
               src={selectedVariant.image} 
@@ -82,20 +89,20 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
         </div>
 
         {/* Configuración de Pedido */}
-        <div className="lg:col-span-7 flex flex-col justify-between">
+        <div className="lg:col-span-7 flex flex-col justify-between h-full">
           <div>
-            <header className="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-black/5">
-              <div className="text-[9px] md:text-[10px] font-black text-link-blue uppercase tracking-[0.4em] mb-2 md:mb-3">
+            <header className="mb-2 md:mb-4 pb-2 md:pb-4 border-b border-black/5">
+              <div className="text-[9px] md:text-[10px] font-black text-link-blue uppercase tracking-[0.4em] mb-1 md:mb-2">
                 {product.category} • {product.type}
               </div>
-              <h1 className="text-2xl md:text-5xl font-black text-black tracking-tighter uppercase leading-tight mb-4 md:mb-6">
+              <h1 className="text-xl md:text-3xl font-black text-black tracking-tighter uppercase leading-tight mb-1 md:mb-2">
                 {product.title}
               </h1>
               {/* Descripción eliminada para dar espacio a los colores */}
             </header>
 
             {/* Selector de SKU Avanzado - Expandido */}
-            <div className="mb-8 md:mb-10">
+            <div className="mb-4 md:mb-6">
               <div className="flex justify-between items-end mb-4 md:mb-6">
                 <div>
                   <h3 className="text-[9px] md:text-[10px] font-black text-black uppercase tracking-[0.4em] mb-1">Colores Disponibles</h3>
@@ -109,22 +116,22 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
               </div>
 
               {/* Grid sin límite de altura y sin scroll para ver todos */}
-              <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
+              <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-1.5 md:gap-2">
                 {availableVariants.map((v) => (
                   <button 
                     key={v.sku}
                     onClick={() => setSelectedVariant(v)}
-                    className={`flex flex-col items-center gap-1.5 md:gap-2 p-2 md:p-3 rounded-xl md:rounded-2xl border-2 transition-all duration-200 ${
+                    className={`flex flex-col items-center gap-1 md:gap-1.5 p-1.5 md:p-2 rounded-lg md:rounded-xl border-2 transition-all duration-200 ${
                       selectedVariant.sku === v.sku 
                         ? 'border-black bg-black text-white shadow-md' 
                         : 'border-black/5 hover:border-black/20 bg-white text-black'
                     }`}
                   >
                     <div 
-                      className="w-4 h-4 md:w-6 md:h-6 rounded-full border border-black/10"
+                      className="w-6 h-6 md:w-8 md:h-8 rounded-full border border-black/10 flex-shrink-0"
                       style={{ backgroundColor: COLOR_MAP[v.option1] || '#CCC' }}
                     />
-                    <div className="text-center w-full">
+                    <div className="text-center w-full min-w-0">
                       <div className="text-[7px] md:text-[8px] font-black uppercase tracking-tight leading-none mb-0.5 truncate w-full">{v.option1}</div>
                       <div className={`text-[6px] md:text-[7px] font-mono truncate ${selectedVariant.sku === v.sku ? 'text-gray-400' : 'text-gray-300'}`}>{v.sku}</div>
                     </div>
@@ -135,21 +142,21 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
           </div>
 
           {/* Acción Maestro compactado */}
-          <div className="bg-[#1D1D1F] rounded-[24px] md:rounded-[32px] p-6 md:p-8 text-white shadow-xl mt-4">
-            <div className="flex flex-row items-center justify-between gap-4 md:gap-8 mb-6 md:mb-8">
-              <div className="w-1/2 md:w-48">
-                <div className="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.4em] mb-2 md:mb-4">Cantidad</div>
-                <div className="flex items-center bg-white/5 rounded-xl md:rounded-2xl border border-white/10 h-10 md:h-14 px-1 md:px-2 transition-all hover:bg-white/10 relative">
+          <div className="bg-[#1D1D1F] rounded-[24px] md:rounded-[32px] p-3 md:p-4 text-white shadow-xl mt-auto flex flex-col items-center text-center max-w-md mx-auto w-full">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-5 mb-2 md:mb-3 w-full">
+              <div className="w-full md:w-40 flex flex-col items-center">
+                <div className="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.4em] mb-1 md:mb-2">Cantidad</div>
+                <div className="flex items-center bg-white/5 rounded-xl md:rounded-2xl border border-white/10 h-8 md:h-12 px-1 md:px-2 transition-all hover:bg-white/10 relative w-full justify-center">
                   <button 
                     type="button" 
                     onClick={decrement} 
-                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:bg-white/10 rounded-lg md:rounded-xl transition-all active:scale-90 z-10"
+                    className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center hover:bg-white/10 rounded-lg md:rounded-xl transition-all active:scale-90 z-10"
                   >
-                    <span className="material-icons text-base md:text-xl">remove</span>
+                    <span className="material-icons text-sm md:text-lg">remove</span>
                   </button>
                   <input 
                     type="number" 
-                    className="flex-1 bg-transparent border-none text-center font-black text-base md:text-xl focus:ring-0 text-white p-0 min-w-0" 
+                    className="flex-1 bg-transparent border-none text-center font-black text-sm md:text-lg focus:ring-0 text-white p-0 min-w-0 max-w-[60px]" 
                     value={quantity}
                     onChange={(e) => handleQuantityChange(e.target.value)}
                     onBlur={() => setQuantity(currentQty)}
@@ -157,39 +164,43 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, onAddToC
                   <button 
                     type="button" 
                     onClick={increment} 
-                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center hover:bg-white/10 rounded-lg md:rounded-xl transition-all active:scale-90 z-10"
+                    className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center hover:bg-white/10 rounded-lg md:rounded-xl transition-all active:scale-90 z-10"
                   >
-                    <span className="material-icons text-base md:text-xl">add</span>
+                    <span className="material-icons text-sm md:text-lg">add</span>
                   </button>
                 </div>
               </div>
               
-              <div className="text-right w-1/2 md:w-auto flex-1 md:border-l border-white/10 md:pl-10">
-                <span className="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.4em] block mb-1 md:mb-2">Total SKU</span>
-                <div className="text-2xl md:text-4xl font-black tracking-tighter text-white leading-none">
+              <div className="text-center w-full md:w-auto flex-1 md:border-l border-white/10 md:pl-8 pt-3 md:pt-0 border-t md:border-t-0 border-white/10 mt-3 md:mt-0">
+                <span className="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.4em] block mb-1">Total SKU</span>
+                <div className="text-xl md:text-3xl font-black tracking-tighter text-white leading-none">
                   ${itemTotal}
                 </div>
               </div>
             </div>
 
             <button 
-              onClick={handleAdd}
-              disabled={currentQty <= 0}
-              className={`w-full h-12 md:h-16 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] transition-all flex items-center justify-center gap-2 md:gap-4 mb-3 md:mb-4 ${
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAdd();
+              }}
+              disabled={currentQty <= 0 || isAdded}
+              className={`w-full h-10 md:h-14 rounded-xl md:rounded-2xl font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] transition-all flex items-center justify-center gap-2 md:gap-3 mb-2 md:mb-3 ${
                 isAdded ? 'bg-accent-green text-white scale-[1.01]' : 
                 currentQty <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' :
                 'bg-white text-black hover:bg-gray-100 active:scale-95 shadow-lg'
               }`}
             >
-              <span className="material-icons text-lg md:text-xl">{isAdded ? 'done' : 'add_shopping_cart'}</span>
+              <span className="material-icons text-base md:text-lg">{isAdded ? 'done' : 'add_shopping_cart'}</span>
               {isAdded ? 'Añadido' : 'Cargar a Proforma'}
             </button>
 
             <button 
               onClick={onViewOrder}
-              className="w-full h-10 md:h-12 rounded-xl md:rounded-2xl font-bold text-[9px] md:text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 border border-white/20 text-white hover:bg-white/10"
+              className="w-full h-8 md:h-10 rounded-xl md:rounded-2xl font-bold text-[8px] md:text-[9px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 border border-white/20 text-white hover:bg-white/10"
             >
-              Ver Proforma <span className="material-icons text-sm">arrow_forward</span>
+              <span className="material-icons text-xs">description</span> Ver Proforma
             </button>
           </div>
         </div>

@@ -11,8 +11,8 @@ interface AccountViewProps {
 
 const AccountView: React.FC<AccountViewProps> = ({ user, onBack, orders, onDeleteOrder }) => {
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12 animate-in fade-in zoom-in-95 duration-500 pb-24">
-      <nav className="mb-8">
+    <div className="max-w-5xl mx-auto px-4 md:px-6 py-4 md:py-8 animate-in fade-in zoom-in-95 duration-500 pb-24">
+      <nav className="mb-4 md:mb-6">
         <button onClick={onBack} className="flex items-center text-[10px] font-black text-[#86868B] uppercase tracking-[0.4em] hover:text-black transition-all group">
           <span className="material-icons text-lg mr-3 group-hover:-translate-x-1 transition-transform">arrow_back</span> Back to Dashboard
         </button>

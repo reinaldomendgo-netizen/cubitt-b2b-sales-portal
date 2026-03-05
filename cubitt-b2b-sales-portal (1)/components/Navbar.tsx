@@ -13,6 +13,23 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ user, cartCount, onOpenCart, onNavigate, searchQuery, setSearchQuery, onToggleMobileMenu }) => {
+  const getAvatarColor = (name: string) => {
+    const colors = [
+      'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500', 'bg-lime-500',
+      'bg-green-500', 'bg-emerald-500', 'bg-teal-500', 'bg-cyan-500', 'bg-sky-500',
+      'bg-blue-500', 'bg-indigo-500', 'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500',
+      'bg-pink-500', 'bg-rose-500'
+    ];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  };
+
+  const initials = user.companyName.substring(0, 2).toUpperCase();
+  const avatarColor = getAvatarColor(user.companyName);
+
   return (
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-black/5">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-4">
@@ -77,12 +94,16 @@ const Navbar: React.FC<NavbarProps> = ({ user, cartCount, onOpenCart, onNavigate
                 <p className="text-[11px] font-black uppercase text-black leading-none mb-1">{user.companyName}</p>
                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Ver Perfil</p>
               </div>
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-black/5 p-0.5 overflow-hidden transition-all group-hover:border-black">
-                <img 
-                  src={user.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80"} 
-                  alt={user.companyName} 
-                  className="w-full h-full rounded-full object-cover"
-                />
+              <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-xs ${avatarColor}`}>
+                {user.avatar ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.companyName} 
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <span>{initials}</span>
+                )}
               </div>
             </button>
           </div>

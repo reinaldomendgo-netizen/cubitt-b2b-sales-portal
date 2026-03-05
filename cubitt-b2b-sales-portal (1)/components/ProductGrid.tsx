@@ -7,9 +7,10 @@ interface ProductGridProps {
   onSelect: (p: Product) => void;
   selectedCategory: string;
   isEmpty?: boolean;
+  onOpenMenu?: () => void;
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelect, selectedCategory, isEmpty }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelect, selectedCategory, isEmpty, onOpenMenu }) => {
   if (isEmpty) {
     return (
       <main className="flex-1 min-w-0 pb-12 flex flex-col items-center justify-center h-full text-center p-8 bg-white rounded-[32px] border border-black/5 shadow-sm">
@@ -20,14 +21,26 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelect, selectedC
         <p className="text-xs md:text-base text-gray-500 max-w-md mb-8">
           Para comenzar a realizar pedidos, por favor sincroniza una hoja de Google Sheets o carga un archivo CSV/Excel desde el panel lateral (Menú en móvil).
         </p>
+        <button 
+          onClick={onOpenMenu}
+          className="lg:hidden mt-4 px-6 py-3 bg-black text-white rounded-xl font-bold text-sm uppercase tracking-wider"
+        >
+          Abrir Menú
+        </button>
       </main>
     );
   }
 
   return (
-    <main className="flex-1 min-w-0 pb-20 md:pb-12 overflow-y-auto pr-0 md:pr-2 custom-scrollbar h-full">
+    <main className="flex-1 min-w-0 pb-20 md:pb-12 pr-0 md:pr-2">
       <div className="mb-4 md:mb-8">
-        <nav className="flex text-[9px] md:text-[10px] text-gray-400 mb-1 md:mb-2 uppercase tracking-[0.2em] font-bold">
+        <nav className="flex items-center text-[9px] md:text-[10px] text-gray-400 mb-1 md:mb-2 uppercase tracking-[0.2em] font-bold">
+          <button 
+            onClick={onOpenMenu}
+            className="lg:hidden mr-3 p-1 -ml-1 text-black hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <span className="material-icons text-lg">menu</span>
+          </button>
           <span className="hover:text-black cursor-pointer">Catálogo</span>
           <span className="mx-2 text-gray-300">/</span>
           <span className="text-black">{selectedCategory === 'All' ? 'Todos' : selectedCategory}</span>

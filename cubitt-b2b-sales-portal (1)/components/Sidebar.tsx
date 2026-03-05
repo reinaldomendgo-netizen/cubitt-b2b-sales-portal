@@ -10,6 +10,7 @@ interface SidebarProps {
   onResetData?: () => void;
   isOpen?: boolean;
   onClose?: () => void;
+  showDesktop?: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -17,7 +18,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedCategory, 
   setSelectedCategory, 
   isOpen = false,
-  onClose
+  onClose,
+  showDesktop = true
 }) => {
   const types: string[] = Array.from<string>(new Set(products.map(p => p.type))).sort();
   
@@ -81,9 +83,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="w-64 flex-shrink-0 hidden lg:flex flex-col sticky top-20 h-[calc(100vh-6rem)]">
-        {sidebarContent}
-      </aside>
+      {showDesktop && (
+        <aside className="w-64 flex-shrink-0 hidden lg:flex flex-col sticky top-20 h-[calc(100vh-6rem)]">
+          {sidebarContent}
+        </aside>
+      )}
 
       {/* Mobile Drawer */}
       {isOpen && (
